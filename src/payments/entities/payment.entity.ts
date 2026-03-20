@@ -74,14 +74,14 @@ export class Payment {
     description: 'Third-party payment transaction number',
     example: '2024010410595900001',
   })
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   tradeNo: string;
 
   @ApiProperty({
     description: 'Out trade number for payment provider',
     example: '1704980400000_123e4567-e89b-12d3-a456-426614174000',
   })
-  @Column({ nullable: true })
+  @Column({ nullable: true,unique: true })
   outTradeNo: string;
 
   @ApiProperty({

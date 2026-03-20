@@ -199,6 +199,11 @@ export class PaymentsService {
         throw new NotFoundException('Payment order not found');
       }
 
+      // Idempotency check: already processed
+      if (payment.status === PaymentStatus.SUCCESS) {
+        return 'success';
+      }
+
       if (params.trade_status === 'TRADE_SUCCESS') {
         await this.paymentsRepository.update(payment.id, {
           status: PaymentStatus.SUCCESS,
@@ -262,6 +267,11 @@ export class PaymentsService {
         throw new NotFoundException('Payment order not found');
       }
 
+      // Idempotency check: already processed
+      if (payment.status === PaymentStatus.SUCCESS) {
+        return { code: 'SUCCESS', message: 'Success' };
+      }
+
       if (result.trade_state === 'SUCCESS') {
         await this.paymentsRepository.update(payment.id, {
           status: PaymentStatus.SUCCESS,
@@ -269,10 +279,21 @@ export class PaymentsService {
           paidAt: new Date(),
         });
 
-        await this.usersService.upgradeToPro(
-          payment.userId,
-          payment.durationInDays,
-        );
+        try {
+          await this.usersService.upgradeToPro(
+            payment.userId,
+            payment.durationInDays,
+          );
+        } catch (error) {
+          if (error.message === 'Subscription not found') {
+            await this.usersService.createSubscription(
+              payment.userId,
+              payment.durationInDays,
+            );
+          } else {
+            throw error;
+          }
+        }
       } else {
         await this.paymentsRepository.update(payment.id, {
           status: PaymentStatus.FAILED,

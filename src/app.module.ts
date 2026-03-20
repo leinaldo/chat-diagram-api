@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ProjectsModule } from './projects/projects.module';
@@ -20,6 +22,18 @@ import { OpenAIModule } from './openai/openai.module';
       inject: [ConfigService],
       useFactory: getDatabaseConfig,
     }),
+    ThrottlerModule.forRoot([
+      {
+        name: 'default',
+        ttl: 60000,
+        limit: 30,
+      },
+      {
+        name: 'ai',
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
     AuthModule,
     UsersModule,
     OpenAIModule,
@@ -27,6 +41,12 @@ import { OpenAIModule } from './openai/openai.module';
     ProjectsModule,
     PaymentsModule,
     TasksModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

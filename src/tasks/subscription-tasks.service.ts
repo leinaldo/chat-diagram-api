@@ -35,7 +35,7 @@ export class SubscriptionTasksService {
           this.subscriptionsRepository.update(subscription.id, {
             isPro: false,
             proExpiresAt: null,
-            remainingVersions: 0, // 重置为免费用户的版本数
+            remainingVersions: 3, // 重置为免费用户的版本数
           }),
         ),
       );

@@ -17,6 +17,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { DiagramsService } from './diagrams.service';
 import { CreateDiagramDto } from './dto/create-diagram.dto';
 import { CreateVersionDto } from './dto/create-version.dto';
@@ -33,6 +34,7 @@ import { SharedDiagramResponseDto } from './dto/shared-diagram-response.dto';
 export class DiagramsController {
   constructor(private readonly diagramsService: DiagramsService) {}
 
+  @Throttle({ ai: { limit: 10, ttl: 60000 } })
   @ApiOperation({ summary: 'Create a new diagram with streaming response' })
   @ApiResponse({
     status: 201,
@@ -191,6 +193,7 @@ export class DiagramsController {
     return this.diagramsService.findOne(id, req.user.id);
   }
 
+  @Throttle({ ai: { limit: 10, ttl: 60000 } })
   @ApiOperation({
     summary: 'Create a new version of the diagram with streaming response',
   })

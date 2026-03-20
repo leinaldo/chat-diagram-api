@@ -13,6 +13,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { OpenAIService } from './openai.service';
 import { EnhanceDescriptionDto } from './dto/enhance-description.dto';
 import { GenerateMermaidDto } from './dto/generate-mermaid.dto';
@@ -39,6 +40,7 @@ export class OpenAIController {
     return { content: enhancedDescription };
   }
 
+  @Throttle({ ai: { limit: 10, ttl: 60000 } })
   @ApiOperation({ summary: 'Stream enhanced description for Mermaid diagram' })
   @ApiResponse({
     status: 200,
@@ -89,6 +91,7 @@ export class OpenAIController {
     return { content: mermaidCode };
   }
 
+  @Throttle({ ai: { limit: 10, ttl: 60000 } })
   @ApiOperation({ summary: 'Stream Mermaid DSL code generation' })
   @ApiResponse({
     status: 200,

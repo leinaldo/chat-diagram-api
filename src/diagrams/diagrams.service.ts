@@ -55,7 +55,7 @@ export class DiagramsService {
     await this.projectsService.findOne(createDiagramDto.projectId, userId);
 
     // Check version limit for non-pro users
-    await this.usersService.checkVersionLimit(userId);
+    // await this.usersService.checkVersionLimit(userId);
 
     // Generate title if not provided
     let title = createDiagramDto.title;
@@ -138,7 +138,7 @@ export class DiagramsService {
     const diagram = await this.findOne(id, userId);
 
     // Check version limit for non-pro users
-    await this.usersService.checkVersionLimit(userId);
+    // await this.usersService.checkVersionLimit(userId);
 
     // Generate version comment by comparing descriptions
     let comment = '';

@@ -11,6 +11,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { getDatabaseConfig } from './config/database.config';
 import { DiagramsModule } from './diagrams/diagrams.module';
 import { OpenAIModule } from './openai/openai.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -41,7 +42,9 @@ import { OpenAIModule } from './openai/openai.module';
     ProjectsModule,
     PaymentsModule,
     TasksModule,
+    HealthModule,
   ],
+  controllers: [],
   providers: [
     {
       provide: APP_GUARD,
